@@ -1,31 +1,35 @@
 import React from 'react'
+import { TodoCounter } from './TodoCounter';
+import { TodoSearch } from './TodoSearch';
+import { TodoList } from './TodoList';
+import { TodoItem } from './TodoItem';
+import { TodoCreateButtom } from './TodoCreateButtom';
+
 // import './App.css';
 
 const todos = [
-  { text: 'Tarea 1', completed: false},
-  { text: 'Tarea 2', completed: false},
-  { text: 'Tarea 3', completed: false},
+  { id: 1, text: 'Tarea 1', completed: false},
+  { id: 2, text: 'Tarea 2', completed: false},
+  { id: 3, text: 'Tarea 3', completed: false},
 ]
 
-function App(props) {
+function App() {
   return (
     <React.Fragment>
-      {/* <TodoCounter /> */}
-      <h2>Has completado 2 de 3 TODOs</h2>
+      <TodoCounter />
 
-      {/* <TodoSearch /> */}
-      <input placeholder="Default text"/>
+      <TodoSearch />
 
-      {/* <TodoList>
+      <TodoList>
         {
           todos.map(todo => (
-            <TodoItem />
+            <TodoItem key = {todo.id} text = {todo.text}/>
           ))
         }
-      </TodoList> */}
+      </TodoList>
 
-      {/* <CreateTodoButtom/> */}
-      <button>+</button>
+      <TodoCreateButtom/>
+
     </React.Fragment>
   );
 }
