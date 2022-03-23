@@ -6,28 +6,48 @@ import { AppUI } from './AppUI';
 const TODOS_VERSION = 'TODOS_V1'
 
 function useLocalStorage(itemName, initialValue) {
-  const localStorageItem = localStorage.getItem(itemName);
-  let parsedItem;
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
 
-  if(!localStorageItem) {
-    localStorage.setItem(itemName, JSON.stringify(initialValue));
-    parsedItem = initialValue;
-  } else {
-    parsedItem = JSON.parse(localStorageItem);
-  }
+  const [item, setItem] = React.useState(initialValue);
 
-  const [item, setItem] = React.useState(parsedItem);
+  React.useEffect(() => {
+    try {
+      // Simulate that we are getting data from another source that will take a few time
+      setTimeout(() => {
+        const localStorageItem = localStorage.getItem(itemName);
+        let parsedItem;
+      
+        if(!localStorageItem) {
+          localStorage.setItem(itemName, JSON.stringify(initialValue));
+          parsedItem = initialValue;
+        } else {
+          parsedItem = JSON.parse(localStorageItem);
+        }
+
+        setItem(parsedItem);
+        setLoading(false);
+      }, 1000)
+    } catch (error) {
+      setError(error);
+    }
+
+  }, [])
 
   const saveItem = (newItem) => {
-    localStorage.setItem(itemName, JSON.stringify(newItem))
-    setItem(newItem);
+    try {
+      localStorage.setItem(itemName, JSON.stringify(newItem))
+      setItem(newItem);
+    } catch (error) {
+      setError(error);
+    }
   }
 
-  return [item, saveItem];
+  return {item, saveItem, loading, error};
 }
 
 function App() {
-  const [todos, saveTodos] = useLocalStorage(TODOS_VERSION, []);
+  const {item: todos, saveItem: saveTodos, loading, error} = useLocalStorage(TODOS_VERSION, []);
   const [searchValue, setSearchValue] = React.useState('');
 
   const completedTodos = todos.filter(todo => todo.completed).length;
@@ -46,8 +66,6 @@ function App() {
     })
   }
 
-
-
   const completeTodos = (id) => {
     const todoIndex = todos.findIndex(todo => todo.id === id);
     const newTodos = [...todos];
@@ -63,7 +81,9 @@ function App() {
   }
 
   return (
-    <AppUI 
+    <AppUI
+      loading = {loading}
+      error = {error}
       totalTodos = {totalTodos}
       completedTodos = {completedTodos}
       searchValue = {searchValue}

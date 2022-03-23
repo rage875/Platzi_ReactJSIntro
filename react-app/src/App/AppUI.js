@@ -19,6 +19,10 @@ function AppUI(props) {
       />
 
       <TodoList>
+        {props.error && <p>Something bad happened, please wait...</p>}
+        {(props.loading && !props.error) && <p>Loading, please wait...</p>}
+        {(!props.loading && !props.error) && 0 <= props.searchedTodos.length && <p>Loaded and working :)</p>}
+
         {props.searchedTodos.map(todo => (
           <TodoItem
             key = {todo.text}
