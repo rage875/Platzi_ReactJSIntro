@@ -5,23 +5,29 @@ import { AppUI } from './AppUI';
 
 const TODOS_VERSION = 'TODOS_V1'
 
-// const defaultTodos = [
-//   { id: 1, text: 'Tarea 1', completed: true},
-//   { id: 2, text: 'Tarea 2', completed: false},
-//   { id: 3, text: 'Tarea 3', completed: true},
-// ]
+function useLocalStorage(itemName, initialValue) {
+  const localStorageItem = localStorage.getItem(itemName);
+  let parsedItem;
 
-function App() {
-  const localStorageTodos = localStorage.getItem(TODOS_VERSION);
-  let parsedTodos = [];
-
-  if(!localStorageTodos) {
-    localStorage.setItem(TODOS_VERSION, JSON.stringify([]));
+  if(!localStorageItem) {
+    localStorage.setItem(itemName, JSON.stringify(initialValue));
+    parsedItem = initialValue;
   } else {
-    parsedTodos = JSON.parse(localStorageTodos);
+    parsedItem = JSON.parse(localStorageItem);
   }
 
-  const [todos, setTodos] = React.useState(parsedTodos);
+  const [item, setItem] = React.useState(parsedItem);
+
+  const saveItem = (newItem) => {
+    localStorage.setItem(itemName, JSON.stringify(newItem))
+    setItem(newItem);
+  }
+
+  return [item, saveItem];
+}
+
+function App() {
+  const [todos, saveTodos] = useLocalStorage(TODOS_VERSION, []);
   const [searchValue, setSearchValue] = React.useState('');
 
   const completedTodos = todos.filter(todo => todo.completed).length;
@@ -40,10 +46,7 @@ function App() {
     })
   }
 
-  const saveTodos = (newTodos) => {
-    localStorage.setItem(TODOS_VERSION, JSON.stringify(newTodos))
-    setTodos(newTodos);
-  }
+
 
   const completeTodos = (id) => {
     const todoIndex = todos.findIndex(todo => todo.id === id);
