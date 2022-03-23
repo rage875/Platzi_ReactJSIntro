@@ -4,35 +4,35 @@ import { TodoSearch } from '../TodoSearch';
 import { TodoList } from '../TodoList';
 import { TodoItem } from '../TodoItem';
 import { TodoCreateButtom } from '../TodoCreateButtom';
+import { TodoContext } from '../TodoContext';
 
-function AppUI(props) {
+function AppUI() {
   return (
     <React.Fragment>
-      <TodoCounter
-        total = {props.totalTodos}
-        completed = {props.completedTodos}
-      />
+      <TodoCounter/>
 
-      <TodoSearch
-        searchValue = {props.searchValue}
-        setSearchValue = {props.setSearchValue}
-      />
+      <TodoSearch/>
 
-      <TodoList>
-        {props.error && <p>Something bad happened, please wait...</p>}
-        {(props.loading && !props.error) && <p>Loading, please wait...</p>}
-        {(!props.loading && !props.error) && 0 <= props.searchedTodos.length && <p>Loaded and working :)</p>}
+      <TodoContext.Consumer>
+        {({
+          error, loading, searchedTodos, completeTodos, deleteTodos}) => (
+          <TodoList>
+            {error && <p>Something bad happened, please wait...</p>}
+            {(loading && !error) && <p>Loading, please wait...</p>}
+            {(!loading && !error) && 0 <= searchedTodos.length && <p>Loaded and working :)</p>}
 
-        {props.searchedTodos.map(todo => (
-          <TodoItem
-            key = {todo.text}
-            text = {todo.text}
-            completed = {todo.completed}
-            onComplete = {()=> props.completeTodos(todo.id)}
-            onDelete = {()=> props.deleteTodos(todo.id)}
-          />
-        ))}
-      </TodoList>
+            {searchedTodos.map(todo => (
+              <TodoItem
+                key = {todo.text}
+                text = {todo.text}
+                completed = {todo.completed}
+                onComplete = {()=> completeTodos(todo.id)}
+                onDelete = {()=> deleteTodos(todo.id)}
+              />
+            ))}
+          </TodoList>
+        )}
+      </TodoContext.Consumer>
 
       <TodoCreateButtom />
     </React.Fragment>
