@@ -6,6 +6,7 @@ import { TodoItem } from '../TodoItem';
 import { TodoCreateButtom } from '../TodoCreateButtom';
 import { TodoContext } from '../TodoContext';
 import { Modal } from '../Modal';
+import { TodoForm } from '../TodoForm';
 
 function AppUI() {
   const {error, loading, searchedTodos, completeTodos, deleteTodos, openModal, setOpenModal} = React.useContext(TodoContext);
@@ -34,7 +35,7 @@ function AppUI() {
 
       {openModal && (
         <Modal>
-
+          <TodoForm></TodoForm>
         </Modal>
       )}
 
